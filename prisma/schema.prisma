@@ -15,21 +15,25 @@ datasource db {
 
 enum OrderStatus {
   PENDING
+  PAID
   DELIVERED
   CANCELED
 }
 
 model Order {
-  id          String      @id @default(uuid())
-  totalAmount Float
-  totalItems  Int
-  status      OrderStatus @default(PENDING)
-  paid        Boolean     @default(false)
-  paidAt      DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String      @id @default(uuid())
+  totalAmount    Float
+  totalItems     Int
+  status         OrderStatus @default(PENDING)
+  paid           Boolean     @default(false)
+  paidAt         DateTime?
+  stripePaymentId String?
 
-  OrderItem OrderItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  OrderItem    OrderItem[]
+  OrderReceipt OrderReceipt?
 }
 
 model OrderItem {
@@ -40,4 +44,15 @@ model OrderItem {
 
   Order   Order?  @relation(fields: [orderId], references: [id])
   orderId String?
+}
+
+model OrderReceipt {
+  id      String @id @default(uuid())
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @unique
+
+  receiptUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
