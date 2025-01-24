@@ -21,8 +21,8 @@ WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 
-RUN yarn prisma migrate deploy
-RUN yarn prisma generate
+RUN npx prisma migrate deploy
+RUN npx prisma generate
 
 RUN yarn build
 RUN yarn install --frozen-lockfile --production && yarn cache clean
